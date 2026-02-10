@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Data Analyst - Advanced Analytics Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --dark-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            --hover-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 50%, #fff3e0 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveBackground 20s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(50px, 50px);
+            }
+        }
+
+        /* Floating Particles */
+        .particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.3;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+
+            25% {
+                transform: translateY(-100px) translateX(50px);
+            }
+
+            50% {
+                transform: translateY(-50px) translateX(-50px);
+            }
+
+            75% {
+                transform: translateY(-150px) translateX(100px);
+            }
+        }
+
+        /* Header */
+        .main-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-bottom: 3px solid rgba(102, 126, 234, 0.3);
+            padding: 2rem 0;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .brand-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: glow 2s ease-in-out infinite;
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+            }
+        }
+
+        /* Footer */
+        .main-footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-top: 3px solid rgba(102, 126, 234, 0.3);
+            padding: 2rem 0;
+            margin-top: 4rem;
+            box-shadow: 0 -5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        .footer-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            color: #fff;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+            color: #fff;
+        }
+
+        .social-icon.linkedin:hover {
+            background: #0077b5;
+            border-color: #0077b5;
+        }
+
+        .social-icon.github:hover {
+            background: #333;
+            border-color: #333;
+        }
+
+        .social-icon.instagram:hover {
+            background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            border-color: #e6683c;
+        }
+
+        .copyright {
+            margin-top: 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+            border-color: rgba(102, 126, 234, 0.4);
+        }
+
+        .card-header {
+            border: none;
+            padding: 1.5rem;
+            font-weight: 600;
+            font-size: 1.3rem;
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .card-header.bg-primary {
+            background: var(--primary-gradient) !important;
+        }
+
+        .card-header.bg-info {
+            background: var(--success-gradient) !important;
+        }
+
+        .card-header.bg-secondary {
+            background: var(--dark-gradient) !important;
+        }
+
+        .card-header.bg-warning {
+            background: var(--warning-gradient) !important;
+        }
+
+        .card-header.bg-dark {
+            background: linear-gradient(135deg, #434343 0%, #000000 100%) !important;
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 50px;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: none;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-success {
+            background: var(--success-gradient);
+            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.5);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning-gradient);
+            box-shadow: 0 5px 20px rgba(250, 112, 154, 0.4);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(250, 112, 154, 0.5);
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+            color: white;
+        }
+
+        .btn-light {
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-light:hover {
+            background: white;
+            color: #667eea;
+            border-color: #667eea;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, rgba(102, 126, 234, 0.1), transparent 30%);
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(1turn);
+            }
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            background: white;
+            border-radius: 13px;
+        }
+
+        .stat-card>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-card h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+            border-color: rgba(102, 126, 234, 0.6);
+        }
+
+        /* Chat Container */
+        .chat-container {
+            height: 400px;
+            overflow-y: auto;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: var(--primary-gradient);
+            border-radius: 10px;
+        }
+
+        .chat-message {
+            margin-bottom: 1rem;
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            max-width: 80%;
+            animation: slideIn 0.3s ease;
+            position: relative;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-message {
+            background: var(--primary-gradient);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .bot-message {
+            background: rgba(102, 126, 234, 0.1);
+            color: #2c3e50;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        /* Form Controls */
+        .form-control,
+        .form-select {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 15px;
+            color: #2c3e50;
+            padding: 0.8rem 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background: white;
+            border-color: #667eea;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
+            color: #2c3e50;
+        }
+
+        .form-control::placeholder {
+            color: rgba(44, 62, 80, 0.5);
+        }
+
+        /* Table */
+        .table {
+            color: #2c3e50;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table thead {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: scale(1.01);
+        }
+
+        /* Loading Spinner */
+        .spinner-border {
+            animation: spin 0.75s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Pulse Animation */
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.9;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Image Animations */
+        .chart-image {
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+            animation: fadeIn 0.5s ease;
+            background: white;
+            padding: 10px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .chart-image:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Toast */
+        .toast {
+            background: white;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            color: #2c3e50;
+        }
+
+        .toast-header {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+        }
+
+        /* Icon Animations */
+        .fa-icon {
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Container */
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Dashboard Hidden State */
+        #dashboard {
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .brand-title {
+                font-size: 1.8rem;
+            }
+
+            .stat-card h3 {
+                font-size: 2rem;
+            }
+
+            .social-links {
+                gap: 1rem;
+            }
+
+            .social-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="animated-bg"></div>
+
+    <!-- Floating Particles -->
+    <div class="particle"
+        style="width: 10px; height: 10px; background: rgba(102, 126, 234, 0.4); top: 10%; left: 10%; animation-delay: 0s;">
+    </div>
+    <div class="particle"
+        style="width: 15px; height: 15px; background: rgba(245, 87, 108, 0.4); top: 20%; left: 80%; animation-delay: 2s;">
+    </div>
+    <div class="particle"
+        style="width: 8px; height: 8px; background: rgba(79, 172, 254, 0.4); top: 60%; left: 15%; animation-delay: 4s;">
+    </div>
+    <div class="particle"
+        style="width: 12px; height: 12px; background: rgba(254, 225, 64, 0.4); top: 80%; left: 70%; animation-delay: 1s;">
+    </div>
+    <div class="particle"
+        style="width: 10px; height: 10px; background: rgba(240, 147, 251, 0.4); top: 40%; left: 90%; animation-delay: 3s;">
+    </div>
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container text-center">
+            <h1 class="brand-title">
+                <i class="fas fa-chart-line fa-icon"></i> AI DATA ANALYST
+            </h1>
+            <p class="tagline">Transform Your Data Into Actionable Insights with AI</p>
+        </div>
+    </header>
+
+    <div class="container py-5">
+        <!-- File Upload Section -->
+        <div class="card mb-4 shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-cloud-upload-alt"></i> 1. Upload Your Data</h5>
+            </div>
+            <div class="card-body">
+                <form id="uploadForm">
+                    <div class="mb-3">
+                        <label for="csvFile" class="form-label">Select CSV File</label>
+                        <input class="form-control" type="file" id="csvFile" accept=".csv" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <span class="spinner-border spinner-border-sm d-none" id="uploadSpinner" role="status"></span>
+                        <i class="fas fa-rocket"></i> Upload & Analyze
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard Content (Hidden initially) -->
+        <div id="dashboard" style="display: none;">
+
+            <!-- Data Summary -->
+            <div class="card mb-4 shadow-lg">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-database"></i> 2. Data Overview</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 mb-4" id="summaryStats">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div class="mt-4">
+                        <h6><i class="fas fa-table"></i> Sample Data Preview:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" id="headTable">
+                                <!-- Populated by JS -->
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Charts -->
+                <div class="col-lg-8">
+                    <div class="card mb-4 shadow-lg h-100">
+                        <div
+                            class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-chart-bar"></i> 3. Visualizations</h5>
+                            <button class="btn btn-sm btn-light" id="refreshChartsBtn">
+                                <i class="fas fa-sync-alt"></i> Generate Charts
+                            </button>
+                        </div>
+                        <div class="card-body text-center" id="chartsContainer">
+                            <p class="text-muted pulse"><i class="fas fa-info-circle"></i> Click 'Generate Charts' to
+                                view visualizations.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Insights -->
+                <div class="col-lg-4">
+                    <div class="card mb-4 shadow-lg h-100">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0"><i class="fas fa-brain"></i> 4. AI Insights</h5>
+                        </div>
+                        <div class="card-body" id="insightsContainer">
+                            <button class="btn btn-warning w-100 pulse" id="getInsightsBtn">
+                                <i class="fas fa-magic"></i> Get AI Insights
+                            </button>
+                            <div id="insightsContent" class="mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Interface -->
+            <div class="card shadow-lg mt-4">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-comments"></i> 5. Chat with Your Data</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chat-container mb-3" id="chatContainer">
+                        <div class="chat-message bot-message">
+                            <i class="fas fa-robot"></i> Hello! I've analyzed your dataset. Ask me anything about it.
+                        </div>
+                    </div>
+                    <form id="chatForm" class="d-flex gap-2">
+                        <input type="text" class="form-control" id="userQuestion"
+                            placeholder="Ask a question about your data..." required>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <h3 class="footer-name">Vatsal Negi</h3>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/vatsal-negi-3624a12b6/" target="_blank"
+                        class="social-icon linkedin" title="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://github.com/VatsalNegi" target="_blank" class="social-icon github" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://www.instagram.com/vatsal.negi/" target="_blank" class="social-icon instagram"
+                        title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+                <p class="copyright">© 2026 Vatsal Negi. All rights reserved. | Built with Django & AI</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto"><i class="fas fa-bell"></i> Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentDatasetId = null;
+
+        // Utilities
+        function showToast(message) {
+            const toastEl = document.getElementById('liveToast');
+            const toastBody = document.getElementById('toastMessage');
+            toastBody.textContent = message;
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+
+        // 1. Upload Handler
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('csvFile');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const spinner = document.getElementById('uploadSpinner');
+            spinner.classList.remove('d-none');
+
+            try {
+                const response = await fetch('/upload/', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentDatasetId = data.id;
+                    renderSummary(data.summary);
+                    document.getElementById('dashboard').style.display = 'block';
+                    showToast('✅ File uploaded successfully!');
+                } else {
+                    showToast('❌ Error: ' + JSON.stringify(data));
+                }
+            } catch (error) {
+                showToast('❌ Error uploading file');
+                console.error(error);
+            } finally {
+                spinner.classList.add('d-none');
+            }
+        });
+
+        // Render Summary
+        function renderSummary(summary) {
+            const stats = document.getElementById('summaryStats');
+            stats.innerHTML = `
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3>${summary.rows}</h3>
+                        <small>Total Rows</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3>${summary.columns}</h3>
+                        <small>Total Columns</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="stat-card text-start">
+                        <strong><i class="fas fa-columns"></i> Columns:</strong><br>
+                        <small>${summary.column_names.join(', ')}</small>
+                    </div>
+                </div>
+            `;
+
+            // Render Head Table
+            const table = document.getElementById('headTable');
+            if (summary.head && summary.head.length > 0) {
+                const headers = Object.keys(summary.head[0]);
+                let thead = '<thead><tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr></thead>';
+                let tbody = '<tbody>' + summary.head.map(row => {
+                    return '<tr>' + headers.map(h => `<td>${row[h]}</td>`).join('') + '</tr>';
+                }).join('') + '</tbody>';
+                table.innerHTML = thead + tbody;
+            }
+        }
+
+        // 2. Charts Handler
+        document.getElementById('refreshChartsBtn').addEventListener('click', async () => {
+            if (!currentDatasetId) return;
+            const container = document.getElementById('chartsContainer');
+            container.innerHTML = '<div class="spinner-border text-primary" role="status"></div><p class="mt-3">Generating charts...</p>';
+
+            try {
+                const response = await fetch(`/charts/${currentDatasetId}/`);
+                const data = await response.json();
+
+                if (response.ok && data.charts && Object.keys(data.charts).length > 0) {
+                    container.innerHTML = '';
+                    for (const [type, base64] of Object.entries(data.charts)) {
+                        const img = document.createElement('img');
+                        img.src = `data:image/png;base64,${base64}`;
+                        img.className = 'img-fluid mb-3 chart-image';
+                        img.alt = type;
+                        container.appendChild(img);
+                    }
+                    showToast('✅ Charts generated successfully!');
+                } else {
+                    container.innerHTML = '<p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Failed to generate charts. Please try again.</p>';
+                }
+            } catch (error) {
+                container.innerHTML = '<p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Error loading charts.</p>';
+                console.error('Chart error:', error);
+            }
+        });
+
+        // 3. AI Insights Handler
+        document.getElementById('getInsightsBtn').addEventListener('click', async () => {
+            if (!currentDatasetId) return;
+            const container = document.getElementById('insightsContent');
+            const btn = document.getElementById('getInsightsBtn');
+            btn.disabled = true;
+            container.innerHTML = '<div class="spinner-border text-warning" role="status"></div><p class="mt-3">AI is analyzing your data...</p>';
+
+            try {
+                const response = await fetch(`/insights/${currentDatasetId}/`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    container.innerHTML = marked.parse(data.insights);
+                    btn.style.display = 'none';
+                    showToast('✅ AI insights generated!');
+                } else {
+                    container.innerHTML = '<p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Failed to get insights: ' + data.insights + '</p>';
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                container.innerHTML = '<p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Error fetching insights.</p>';
+                btn.disabled = false;
+            }
+        });
+
+        // 4. Chat Handler
+        document.getElementById('chatForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentDatasetId) return;
+            const input = document.getElementById('userQuestion');
+            const question = input.value.trim();
+            if (!question) return;
+
+            // Add user message
+            const chatContainer = document.getElementById('chatContainer');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message user-message';
+            userMsg.innerHTML = `<i class="fas fa-user"></i> ${question}`;
+            chatContainer.appendChild(userMsg);
+
+            input.value = '';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // Add loading bot message
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = 'chat-message bot-message';
+            loadingMsg.innerHTML = '<span class="spinner-grow spinner-grow-sm" role="status"></span> AI is thinking...';
+            chatContainer.appendChild(loadingMsg);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            try {
+                const response = await fetch(`/chat/${currentDatasetId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ question: question })
+                });
+                const data = await response.json();
+
+                chatContainer.removeChild(loadingMsg);
+
+                const botMsg = document.createElement('div');
+                botMsg.className = 'chat-message bot-message';
+                if (response.ok) {
+                    botMsg.innerHTML = '<i class="fas fa-robot"></i> ' + marked.parse(data.answer);
+                } else {
+                    botMsg.innerHTML = "<i class='fas fa-exclamation-circle'></i> Sorry, I couldn't answer that. Error: " + data.answer;
+                }
+                chatContainer.appendChild(botMsg);
+
+            } catch (error) {
+                chatContainer.removeChild(loadingMsg);
+                const botMsg = document.createElement('div');
+                botMsg.className = 'chat-message bot-message text-danger';
+                botMsg.innerHTML = "<i class='fas fa-exclamation-triangle'></i> Error communicating with AI.";
+                chatContainer.appendChild(botMsg);
+            }
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        });
+    </script>
+</body>
+
+</html>
