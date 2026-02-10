@@ -137,4 +137,4 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # OpenRouter API Key
-OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY', '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')
+OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY')
