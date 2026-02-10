@@ -838,200 +838,305 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let currentDatasetId = null;
+    let currentDatasetId = null;
 
-        // Utilities
-        function showToast(message) {
-            const toastEl = document.getElementById('liveToast');
-            const toastBody = document.getElementById('toastMessage');
-            toastBody.textContent = message;
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
+    const BASE_URL = window.location.origin;
+
+    function showToast(message) {
+        const toastEl = document.getElementById('liveToast');
+        const toastBody = document.getElementById('toastMessage');
+        toastBody.textContent = message;
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    }
+
+    // ================================
+    // UPLOAD CSV
+    // ================================
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+
+        e.preventDefault();
+
+        const fileInput = document.getElementById('csvFile');
+        const file = fileInput.files[0];
+
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const spinner = document.getElementById('uploadSpinner');
+        spinner.classList.remove('d-none');
+
+        try {
+
+            const response = await fetch(`${BASE_URL}/upload/`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+
+                // ✅ FIXED LINE
+                currentDatasetId = data.dataset_id;
+
+                console.log("Dataset ID:", currentDatasetId);
+
+                renderSummary(data.summary);
+
+                document.getElementById('dashboard').style.display = 'block';
+
+                showToast("File uploaded successfully!");
+
+            } else {
+
+                showToast("Upload failed");
+
+                console.error(data);
+            }
+
+        } catch (error) {
+
+            showToast("Upload error");
+
+            console.error(error);
+
+        } finally {
+
+            spinner.classList.add('d-none');
+
         }
 
-        // 1. Upload Handler
-        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const fileInput = document.getElementById('csvFile');
-            const file = fileInput.files[0];
-            if (!file) return;
+    });
 
-            const formData = new FormData();
-            formData.append('file', file);
 
-            const spinner = document.getElementById('uploadSpinner');
-            spinner.classList.remove('d-none');
+    // ================================
+    // SUMMARY
+    // ================================
+    function renderSummary(summary) {
 
-            try {
-                const response = await fetch('/upload/', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await response.json();
+        const stats = document.getElementById('summaryStats');
 
-                if (response.ok) {
-                    currentDatasetId = data.id;
-                    renderSummary(data.summary);
-                    document.getElementById('dashboard').style.display = 'block';
-                    showToast('✅ File uploaded successfully!');
-                } else {
-                    showToast('❌ Error: ' + JSON.stringify(data));
-                }
-            } catch (error) {
-                showToast('❌ Error uploading file');
-                console.error(error);
-            } finally {
-                spinner.classList.add('d-none');
-            }
-        });
+        stats.innerHTML = `
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h3>${summary.rows}</h3>
+                <small>Total Rows</small>
+            </div>
+        </div>
 
-        // Render Summary
-        function renderSummary(summary) {
-            const stats = document.getElementById('summaryStats');
-            stats.innerHTML = `
-                <div class="col-md-3">
-                    <div class="stat-card">
-                        <h3>${summary.rows}</h3>
-                        <small>Total Rows</small>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-card">
-                        <h3>${summary.columns}</h3>
-                        <small>Total Columns</small>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="stat-card text-start">
-                        <strong><i class="fas fa-columns"></i> Columns:</strong><br>
-                        <small>${summary.column_names.join(', ')}</small>
-                    </div>
-                </div>
-            `;
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h3>${summary.columns}</h3>
+                <small>Total Columns</small>
+            </div>
+        </div>
 
-            // Render Head Table
-            const table = document.getElementById('headTable');
-            if (summary.head && summary.head.length > 0) {
-                const headers = Object.keys(summary.head[0]);
-                let thead = '<thead><tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr></thead>';
-                let tbody = '<tbody>' + summary.head.map(row => {
-                    return '<tr>' + headers.map(h => `<td>${row[h]}</td>`).join('') + '</tr>';
-                }).join('') + '</tbody>';
-                table.innerHTML = thead + tbody;
-            }
+        <div class="col-md-6">
+            <div class="stat-card text-start">
+                <strong>Columns:</strong><br>
+                <small>${summary.column_names.join(', ')}</small>
+            </div>
+        </div>
+        `;
+
+        const table = document.getElementById('headTable');
+
+        if (summary.head && summary.head.length > 0) {
+
+            const headers = Object.keys(summary.head[0]);
+
+            let thead =
+                '<thead><tr>' +
+                headers.map(h => `<th>${h}</th>`).join('') +
+                '</tr></thead>';
+
+            let tbody =
+                '<tbody>' +
+                summary.head.map(row =>
+                    '<tr>' +
+                    headers.map(h => `<td>${row[h]}</td>`).join('') +
+                    '</tr>'
+                ).join('') +
+                '</tbody>';
+
+            table.innerHTML = thead + tbody;
+        }
+    }
+
+
+    // ================================
+    // CHARTS
+    // ================================
+    document.getElementById('refreshChartsBtn').addEventListener('click', async () => {
+
+        if (!currentDatasetId) {
+            showToast("Upload dataset first");
+            return;
         }
 
-        // 2. Charts Handler
-        document.getElementById('refreshChartsBtn').addEventListener('click', async () => {
-            if (!currentDatasetId) return;
-            const container = document.getElementById('chartsContainer');
-            container.innerHTML = '<div class="spinner-border text-primary" role="status"></div><p class="mt-3">Generating charts...</p>';
+        const container = document.getElementById('chartsContainer');
 
-            try {
-                const response = await fetch(`/charts/${currentDatasetId}/`);
-                const data = await response.json();
+        container.innerHTML =
+            `<div class="spinner-border text-primary"></div>
+         <p>Generating charts...</p>`;
 
-                if (response.ok && data.charts && Object.keys(data.charts).length > 0) {
-                    container.innerHTML = '';
-                    for (const [type, base64] of Object.entries(data.charts)) {
-                        const img = document.createElement('img');
-                        img.src = `data:image/png;base64,${base64}`;
-                        img.className = 'img-fluid mb-3 chart-image';
-                        img.alt = type;
-                        container.appendChild(img);
-                    }
-                    showToast('✅ Charts generated successfully!');
-                } else {
-                    container.innerHTML = '<p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Failed to generate charts. Please try again.</p>';
+        try {
+
+            const response =
+                await fetch(`${BASE_URL}/charts/${currentDatasetId}/`);
+
+            const data = await response.json();
+
+            if (response.ok && data.charts) {
+
+                container.innerHTML = "";
+
+                for (const key in data.charts) {
+
+                    const img = document.createElement("img");
+
+                    img.src =
+                        "data:image/png;base64," + data.charts[key];
+
+                    img.className =
+                        "img-fluid mb-3 chart-image";
+
+                    container.appendChild(img);
                 }
-            } catch (error) {
-                container.innerHTML = '<p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Error loading charts.</p>';
-                console.error('Chart error:', error);
+
+                showToast("Charts generated!");
+
+            } else {
+
+                container.innerHTML =
+                    "<p>Error generating charts</p>";
             }
-        });
 
-        // 3. AI Insights Handler
-        document.getElementById('getInsightsBtn').addEventListener('click', async () => {
-            if (!currentDatasetId) return;
-            const container = document.getElementById('insightsContent');
-            const btn = document.getElementById('getInsightsBtn');
-            btn.disabled = true;
-            container.innerHTML = '<div class="spinner-border text-warning" role="status"></div><p class="mt-3">AI is analyzing your data...</p>';
+        } catch (error) {
 
-            try {
-                const response = await fetch(`/insights/${currentDatasetId}/`);
-                const data = await response.json();
+            container.innerHTML =
+                "<p>Error loading charts</p>";
 
-                if (response.ok) {
-                    container.innerHTML = marked.parse(data.insights);
-                    btn.style.display = 'none';
-                    showToast('✅ AI insights generated!');
-                } else {
-                    container.innerHTML = '<p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Failed to get insights: ' + data.insights + '</p>';
-                    btn.disabled = false;
-                }
-            } catch (error) {
-                container.innerHTML = '<p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Error fetching insights.</p>';
-                btn.disabled = false;
+            console.error(error);
+        }
+    });
+
+
+    // ================================
+    // AI INSIGHTS
+    // ================================
+    document.getElementById('getInsightsBtn').addEventListener('click', async () => {
+
+        if (!currentDatasetId) {
+            showToast("Upload dataset first");
+            return;
+        }
+
+        const container =
+            document.getElementById('insightsContent');
+
+        container.innerHTML =
+            `<div class="spinner-border text-warning"></div>
+         <p>AI analyzing...</p>`;
+
+        try {
+
+            const response =
+                await fetch(`${BASE_URL}/insights/${currentDatasetId}/`);
+
+            const data = await response.json();
+
+            if (response.ok) {
+
+                container.innerHTML =
+                    marked.parse(data.insights);
+
+                showToast("Insights generated!");
+
+            } else {
+
+                container.innerHTML =
+                    "<p>Error loading insights</p>";
             }
-        });
 
-        // 4. Chat Handler
-        document.getElementById('chatForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!currentDatasetId) return;
-            const input = document.getElementById('userQuestion');
-            const question = input.value.trim();
-            if (!question) return;
+        } catch (error) {
 
-            // Add user message
-            const chatContainer = document.getElementById('chatContainer');
-            const userMsg = document.createElement('div');
-            userMsg.className = 'chat-message user-message';
-            userMsg.innerHTML = `<i class="fas fa-user"></i> ${question}`;
-            chatContainer.appendChild(userMsg);
+            container.innerHTML =
+                "<p>Error loading insights</p>";
 
-            input.value = '';
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+            console.error(error);
+        }
 
-            // Add loading bot message
-            const loadingMsg = document.createElement('div');
-            loadingMsg.className = 'chat-message bot-message';
-            loadingMsg.innerHTML = '<span class="spinner-grow spinner-grow-sm" role="status"></span> AI is thinking...';
-            chatContainer.appendChild(loadingMsg);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+    });
 
-            try {
-                const response = await fetch(`/chat/${currentDatasetId}/`, {
-                    method: 'POST',
+
+    // ================================
+    // CHAT
+    // ================================
+    document.getElementById('chatForm').addEventListener('submit', async (e) => {
+
+        e.preventDefault();
+
+        if (!currentDatasetId) {
+            showToast("Upload dataset first");
+            return;
+        }
+
+        const input =
+            document.getElementById('userQuestion');
+
+        const question = input.value.trim();
+
+        if (!question) return;
+
+        const chatContainer =
+            document.getElementById('chatContainer');
+
+        chatContainer.innerHTML +=
+            `<div class="chat-message user-message">${question}</div>`;
+
+        input.value = "";
+
+        try {
+
+            const response =
+                await fetch(`${BASE_URL}/chat/${currentDatasetId}/`, {
+
+                    method: "POST",
+
                     headers: {
-                        'Content-Type': 'application/json',
+                        "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ question: question })
+
+                    body: JSON.stringify({
+                        question: question
+                    })
                 });
-                const data = await response.json();
 
-                chatContainer.removeChild(loadingMsg);
+            const data = await response.json();
 
-                const botMsg = document.createElement('div');
-                botMsg.className = 'chat-message bot-message';
-                if (response.ok) {
-                    botMsg.innerHTML = '<i class="fas fa-robot"></i> ' + marked.parse(data.answer);
-                } else {
-                    botMsg.innerHTML = "<i class='fas fa-exclamation-circle'></i> Sorry, I couldn't answer that. Error: " + data.answer;
-                }
-                chatContainer.appendChild(botMsg);
+            chatContainer.innerHTML +=
+                `<div class="chat-message bot-message">
+                 ${marked.parse(data.answer)}
+                 </div>`;
 
-            } catch (error) {
-                chatContainer.removeChild(loadingMsg);
-                const botMsg = document.createElement('div');
-                botMsg.className = 'chat-message bot-message text-danger';
-                botMsg.innerHTML = "<i class='fas fa-exclamation-triangle'></i> Error communicating with AI.";
-                chatContainer.appendChild(botMsg);
-            }
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        });
-    </script>
+        } catch (error) {
+
+            chatContainer.innerHTML +=
+                `<div class="chat-message bot-message">
+                 Error communicating with AI
+                 </div>`;
+        }
+
+        chatContainer.scrollTop =
+            chatContainer.scrollHeight;
+    });
+
+</script>
+
 </body>
 
 </html>
