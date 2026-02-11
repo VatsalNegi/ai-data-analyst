@@ -1,6 +1,3 @@
-OVERVIEW
-
-README = """
 # AI Data Analyst Web Application
 
 Live Demo: https://ai-data-analyst-n54v.onrender.com
