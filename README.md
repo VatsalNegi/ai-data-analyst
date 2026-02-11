@@ -1,4 +1,4 @@
-# generate_readme.py
+OVERVIEW
 
 README = """
 # AI Data Analyst Web Application
