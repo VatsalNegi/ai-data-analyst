@@ -143,14 +143,3 @@ LinkedIn:
 https://www.linkedin.com/in/vatsal-negi-3624a12b6/
 
 ---
-
-# License
-
-MIT License
-"""
-
-# This will create README.md automatically
-with open("README.md", "w", encoding="utf-8") as f:
-    f.write(README)
-
-print("README.md generated successfully!")
