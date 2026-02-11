@@ -14,14 +14,6 @@ https://ai-data-analyst-n54v.onrender.com
 
 ---
 
-# Screenshot
-
-Add your screenshot inside docs/screenshot.png and GitHub will display it:
-
-![AI Data Analyst Screenshot](docs/image1.png)
-
----
-
 # Features
 
 • CSV Upload and Analysis  
